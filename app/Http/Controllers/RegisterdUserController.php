@@ -33,25 +33,25 @@ class RegisterdUserController extends Controller
     {
         $userAttributes = $request->validate([
             'name' => ['required'],
-            'email' =>['required', 'email', 'max:254', 'unique:users,email'],
-            'password' =>['required','confirmed',Password::min(6)],
+            'email' => ['required', 'email', 'max:254', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Password::min(6)],
         ]);
         $employerAttributes = $request->validate([
-          'employer' => ['required'],
-          'logo' =>['required',File::types(['png','jpg','webp'])],
+            'employer' => ['required'],
+            'logo' => ['required', File::types(['png', 'jpg', 'webp'])],
         ]);
-       $user = User::create($userAttributes);
+        $user = User::create($userAttributes);
 
-      $logoPath = $request->logo->store('logos');
+        $logoPath = $request->logo->store('logos', 'public');
 
-       $user->employer()->create([
-              'name' => $employerAttributes['employer'],
-              'logo' => $logoPath,
-       ]);
+        $user->employer()->create([
+            'name' => $employerAttributes['employer'],
+            'logo' => $logoPath,
+        ]);
 
 
-       Auth::login($user);
-       return redirect('/');
+        Auth::login($user);
+        return redirect('/');
     }
 
     /**
